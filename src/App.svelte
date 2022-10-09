@@ -3,9 +3,8 @@
 </script>
 
 <main>
-  <h1>Vite + Svelte</h1>
-
-    <PixelSort />
+  <!-- <h1>Vite + Svelte</h1> -->
+  <PixelSort />
 </main>
 
 <style lang="scss">

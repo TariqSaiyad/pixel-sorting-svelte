@@ -1,25 +1,19 @@
 <script lang="ts">
-  import type { Color, Image, Renderer } from "p5";
+  import type { Image, Renderer } from "p5";
   import P5, { type Sketch } from "p5-svelte";
+  import type { Col, Mode } from "$utils/types";
+  import { MODES } from "$utils/constants";
+  import { getBrightness, getHue, imageToBW } from "$utils/utils";
 
-  type Mode = "ORIGINAL" | "BW" | "RANDOM" | "SORTED";
-
-  const MODES: Mode[] = ["BW", "ORIGINAL", "RANDOM", "SORTED"];
-  // const MODES: Mode[] = [Mode.BW, Mode.ORIGINAL, Mode.RANDOM, Mode.SORTED];
-
-  type Col = {
-    r: number;
-    g: number;
-    b: number;
-  };
+  export let direction = 1; //* 0 or 1
+  export let threshold = 70; //* 120-170
 
   const sketch: Sketch = (p5) => {
     let canvas: Renderer;
-    // const fileName = "src/assets/img1-small.jpg";
-    const fileName = "src/assets/mario-2-small.png";
+    const fileName = "src/assets/mario.png";
     let img: Image, bwImg: Image, sortedImg: Image, randomImg: Image;
-    let direction = 1; //* 0 or 1
-    let threshold = 70; //* 120-170
+    // const MODES: Mode[] = ["BW", "ORIGINAL", "RANDOM", "SORTED"];
+
     let INTERVAL_LEN = 0;
     let counter = 0;
     let current: Mode = "SORTED";
@@ -43,8 +37,6 @@
     let numBlack: number[] = [];
 
     p5.preload = () => {
-      p5.pixelDensity(1);
-
       img = p5.loadImage(fileName);
       bwImg = p5.loadImage(fileName);
       sortedImg = p5.loadImage(fileName);
@@ -57,6 +49,7 @@
       if (p5.key == "b") {
         const newI = (MODES.indexOf(current) + 1) % MODES.length;
         current = MODES[newI];
+        console.log(current);
         p5.loop();
       }
     };
@@ -68,6 +61,7 @@
       randomImg.loadPixels();
       canvas = p5.createCanvas(img.width, img.height);
       p5.frameRate(120);
+      p5.pixelDensity(1);
 
       let count = 0;
       for (let x = 0; x < img.height; x++) {
@@ -98,9 +92,11 @@
         numBlack.push(count);
         count = 0;
       }
-      INTERVAL_LEN = numBlack[counter];
+      console.log(bwImg.pixels);
 
+      INTERVAL_LEN = numBlack[counter];
       bwImg.updatePixels();
+
       p5.image(img, 0, 0);
 
       p5.loadPixels();
@@ -201,30 +197,6 @@
       }
     };
   };
-
-  function getHue({ r, g, b }: Col) {
-    let min = Math.min(Math.min(r, g), b);
-    let max = Math.max(Math.max(r, g), b);
-
-    if (min == max) return 0;
-
-    let hue = 0.0;
-    if (max == r) hue = (g - b) / (max - min);
-    else if (max == g) hue = 2.0 + (b - r) / (max - min);
-    else hue = 4.0 + (r - g) / (max - min);
-
-    hue = hue * 60;
-    if (hue < 0) hue = hue + 360;
-
-    return Math.round(hue);
-  }
-
-  function getBrightness(r: number, g: number, b: number) {
-    return Math.sqrt(
-      Math.pow(0.299 * r, 2) + Math.pow(0.587 * g, 2) + Math.pow(0.114 * b, 2)
-    );
-    // return (r + b + g) / 3;
-  }
 </script>
 
 <P5 {sketch} />

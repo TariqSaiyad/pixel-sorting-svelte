@@ -1,0 +1,73 @@
+<script lang="ts">
+  import type { ImgObject } from "$utils/types";
+  import type { Image } from "p5";
+  import P5, { type Sketch } from "p5-svelte";
+  import { getBrightness, getHue } from "$utils/utils";
+  export let selected: ImgObject;
+  export let imgWidth = 300;
+  export let imgHeight = 300;
+
+  export let mode: "Hue" | "Brightness" = "Brightness";
+  export let threshold: number;
+
+  $: {
+    console.log(selected);
+  }
+
+  const sketch: Sketch = (p5) => {
+    let img: Image;
+    let bwImg: Image;
+
+    p5.preload = () => {
+      img = p5.loadImage(selected.path ?? selected.data);
+      bwImg = p5.loadImage(selected.path ?? selected.data);
+    };
+
+    p5.setup = () => {
+      p5.createCanvas(imgWidth, imgHeight);
+      img.resize(imgWidth, imgHeight);
+      bwImg.resize(imgWidth, imgHeight);
+      img.loadPixels();
+      bwImg.loadPixels();
+
+      p5.frameRate(30);
+    };
+
+    p5.draw = () => {
+      for (let x = 0; x < img.height; x++) {
+        for (let y = 0; y < img.width; y++) {
+          let index = 4 * (x * img.width + y);
+          const r = img.pixels[index];
+          const g = img.pixels[index + 1];
+          const b = img.pixels[index + 2];
+
+          const bright =
+            mode == "Hue" ? getHue(r, g, b) : getBrightness(r, g, b);
+
+          // Test the brightness against the threshold
+          if (bright > threshold) {
+            bwImg.pixels[index] = 255;
+            bwImg.pixels[index + 1] = 255;
+            bwImg.pixels[index + 2] = 255;
+          } else {
+            bwImg.pixels[index] = 0;
+            bwImg.pixels[index + 1] = 0;
+            bwImg.pixels[index + 2] = 0;
+          }
+        }
+      }
+      bwImg.updatePixels();
+      p5.image(bwImg, 0, 0);
+    };
+  };
+</script>
+
+<div class="image-preview">
+  <P5 {sketch} />
+</div>
+
+<style lang="scss">
+  .image-preview {
+    padding: 1rem;
+  }
+</style>

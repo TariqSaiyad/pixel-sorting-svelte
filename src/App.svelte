@@ -1,9 +1,8 @@
 <script lang="ts">
-  import PixelSort from "./lib/PixelSort.svelte";
-  import type { ImgObject } from "$utils/types";
-  import { IMAGES } from "$utils/constants";
   import ImageButton from "$lib/ImageButton.svelte";
   import ImagePreview from "$lib/ImagePreview.svelte";
+  import { IMAGES } from "$utils/constants";
+  import type { ImgObject } from "$utils/types";
 
   let threshold = 70;
   let selected: ImgObject = IMAGES.at(0);
@@ -34,7 +33,7 @@
       <label for="threshold">{threshold}</label>
     </div>
     <ImagePreview {selected} {threshold} />
-    <PixelSort {threshold} />
+    <!-- <PixelSort {threshold} /> -->
   </div>
 </main>
 

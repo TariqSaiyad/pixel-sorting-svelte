@@ -9,6 +9,8 @@
   export let threshold = 70; //* 120-170
 
   const sketch: Sketch = (p5) => {
+    //! TODO: Enable
+    // p5.disableFriendlyErrors = true;
     let canvas: Renderer;
     const fileName = "src/assets/mario.png";
     let img: Image, bwImg: Image, sortedImg: Image, randomImg: Image;
@@ -24,9 +26,9 @@
     let i = 0;
 
     let random: Col = {
-      r: p5.random(255),
-      g: p5.random(255),
-      b: p5.random(255),
+      r: Math.random() * 255,
+      g: Math.random() * 255,
+      b: Math.random() * 255,
     };
 
     let temp: Col[] = [];
@@ -128,9 +130,9 @@
               INTERVAL_LEN = numBlack[counter];
 
               random = {
-                r: p5.random(255),
-                g: p5.random(255),
-                b: p5.random(255),
+                r: Math.random() * 255,
+                g: Math.random() * 255,
+                b: Math.random() * 255,
               };
 
               temp.sort(

@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { ImgObject } from "$utils/types";
+  import { getBrightness, getHue } from "$utils/utils";
   import type { Image } from "p5";
   import P5, { type Sketch } from "p5-svelte";
-  import { getBrightness, getHue } from "$utils/utils";
   export let selected: ImgObject;
   export let imgWidth = 300;
   export let imgHeight = 300;
@@ -10,20 +10,20 @@
   export let mode: "Hue" | "Brightness" = "Brightness";
   export let threshold: number;
 
-  $: {
-    console.log(selected);
-  }
-
-  const sketch: Sketch = (p5) => {
+  let sketch: Sketch = (p5) => {
     let img: Image;
     let bwImg: Image;
+    let selectedTitle = selected.title;
 
     p5.preload = () => {
-      img = p5.loadImage(selected.path ?? selected.data);
-      bwImg = p5.loadImage(selected.path ?? selected.data);
+      let file = selected.path ?? selected.data;
+      img = p5.loadImage(file);
+      bwImg = p5.loadImage(file);
     };
 
-    p5.setup = () => {
+    p5.setup = () => reset();
+
+    function reset() {
       p5.createCanvas(imgWidth, imgHeight);
       img.resize(imgWidth, imgHeight);
       bwImg.resize(imgWidth, imgHeight);
@@ -31,9 +31,16 @@
       bwImg.loadPixels();
 
       p5.frameRate(30);
-    };
+    }
 
     p5.draw = () => {
+      // reset sketch.
+      if (selected.title !== selectedTitle) {
+        selectedTitle = selected.title;
+        let file = selected.path ?? selected.data;
+        img = p5.loadImage(file, () => (bwImg = p5.loadImage(file, reset)));
+      }
+
       for (let x = 0; x < img.height; x++) {
         for (let y = 0; y < img.width; y++) {
           let index = 4 * (x * img.width + y);

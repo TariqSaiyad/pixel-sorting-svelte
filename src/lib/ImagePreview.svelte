@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ImgObject } from "$utils/types";
+  import type { ImgObject, SortType } from "$utils/types";
   import { getBrightness, getHue } from "$utils/utils";
   import type { Image } from "p5";
   import P5, { type Sketch } from "p5-svelte";
@@ -7,8 +7,9 @@
   export let imgWidth = 300;
   export let imgHeight = 300;
 
-  export let mode: "Hue" | "Brightness" = "Brightness";
+  export let sortType: SortType = "BRIGHTNESS";
   export let threshold: number;
+  export let direction = false;
 
   let sketch: Sketch = (p5) => {
     let img: Image;
@@ -24,6 +25,7 @@
     p5.setup = () => reset();
 
     function reset() {
+      p5.disableFriendlyErrors = true;
       p5.createCanvas(imgWidth, imgHeight);
       img.resize(imgWidth, imgHeight);
       bwImg.resize(imgWidth, imgHeight);
@@ -31,6 +33,7 @@
       bwImg.loadPixels();
 
       p5.frameRate(30);
+      p5.loop();
     }
 
     p5.draw = () => {
@@ -38,21 +41,23 @@
       if (selected.title !== selectedTitle) {
         selectedTitle = selected.title;
         let file = selected.path ?? selected.data;
+        p5.noLoop();
         img = p5.loadImage(file, () => (bwImg = p5.loadImage(file, reset)));
       }
+
+      let rT, gT, bT, bright;
 
       for (let x = 0; x < img.height; x++) {
         for (let y = 0; y < img.width; y++) {
           let index = 4 * (x * img.width + y);
-          const r = img.pixels[index];
-          const g = img.pixels[index + 1];
-          const b = img.pixels[index + 2];
+          rT = img.pixels[index];
+          gT = img.pixels[index + 1];
+          bT = img.pixels[index + 2];
 
-          const bright =
-            mode == "Hue" ? getHue(r, g, b) : getBrightness(r, g, b);
+          bright =
+            sortType === "HUE" ? getHue(rT, gT, bT) : getBrightness(rT, gT, bT);
 
-          // Test the brightness against the threshold
-          if (bright > threshold) {
+          if (direction ? bright > threshold : bright < threshold) {
             bwImg.pixels[index] = 255;
             bwImg.pixels[index + 1] = 255;
             bwImg.pixels[index + 2] = 255;

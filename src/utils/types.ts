@@ -1,5 +1,7 @@
 export type Mode = "ORIGINAL" | "BW" | "RANDOM" | "SORTED";
 
+export type SortType = "HUE" | "BRIGHTNESS";
+
 export type Col = {
   r: number;
   g: number;

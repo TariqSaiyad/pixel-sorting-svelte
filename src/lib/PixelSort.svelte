@@ -1,18 +1,20 @@
 <script lang="ts">
   import type { Image, Renderer } from "p5";
   import P5, { type Sketch } from "p5-svelte";
-  import type { Col, Mode } from "$utils/types";
+  import type { Col, ImgObject, Mode, SortType } from "$utils/types";
   import { MODES } from "$utils/constants";
   import { getBrightness, getHue, imageToBW } from "$utils/utils";
 
-  export let direction = 1; //* 0 or 1
+  export let direction = false;
   export let threshold = 70; //* 120-170
+  export let selected: ImgObject;
+  export let sortType: SortType = "BRIGHTNESS";
 
   const sketch: Sketch = (p5) => {
     //! TODO: Enable
     // p5.disableFriendlyErrors = true;
     let canvas: Renderer;
-    const fileName = "src/assets/mario.png";
+    const fileName = selected.path ?? selected.data;
     let img: Image, bwImg: Image, sortedImg: Image, randomImg: Image;
     // const MODES: Mode[] = ["BW", "ORIGINAL", "RANDOM", "SORTED"];
 
@@ -65,22 +67,25 @@
       p5.frameRate(120);
       p5.pixelDensity(1);
 
+      let rT, gT, bT, bright;
+
       let count = 0;
       for (let x = 0; x < img.height; x++) {
         for (let y = 0; y < img.width; y++) {
           let index = 4 * (x * img.width + y);
-          const r = img.pixels[index];
-          const g = img.pixels[index + 1];
-          const b = img.pixels[index + 2];
+          rT = img.pixels[index];
+          gT = img.pixels[index + 1];
+          bT = img.pixels[index + 2];
 
           // const bright = getHue(r);
           // const bright = (r + g + b) / 3;
-          const bright = getBrightness(r, g, b);
+          bright =
+            sortType === "HUE" ? getHue(rT, gT, bT) : getBrightness(rT, gT, bT);
           // const bright = (0.299 * r) + (0.587 * g) + (0.114 * b);
           // const bright = 0.2126 * r + 0.7152 * g + 0.0722 * b;
           // Test the brightness against the threshold
 
-          if (bright > threshold) {
+          if (direction ? bright > threshold : bright < threshold) {
             bwImg.pixels[index] = 255;
             bwImg.pixels[index + 1] = 255;
             bwImg.pixels[index + 2] = 255;
@@ -175,11 +180,7 @@
             gb = bwImg.pixels[i + 1];
             bb = bwImg.pixels[i + 2];
 
-            if (
-              rb === direction * 255 &&
-              gb === direction * 255 &&
-              bb === direction * 255
-            ) {
+            if (rb === 255 && gb === 255 && bb === 255) {
               // randomPixels[i] = r;
               // randomPixels[i + 1] = g;
               // randomPixels[i + 2] = b;

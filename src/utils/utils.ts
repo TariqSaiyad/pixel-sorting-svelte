@@ -1,5 +1,5 @@
 import type { Image } from "p5";
-import type { Col } from "./types";
+import type { Col, SortType } from "./types";
 
 export function getBrightness(r: number, g: number, b: number) {
   return Math.sqrt(
@@ -28,7 +28,7 @@ export function imageToBW(
   img: Image,
   bwImg: Image,
   threshold: number,
-  mode: "Hue" | "Brightness" = "Brightness"
+  mode: SortType = "BRIGHTNESS"
 ) {
   let bwArr: number[] = [];
   let numBlack: number[] = [];
@@ -44,7 +44,7 @@ export function imageToBW(
       // const bright = (r + g + b) / 3;
       // const bright = (0.299 * r) + (0.587 * g) + (0.114 * b);
       // const bright = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-      const bright = mode == "Hue" ? getHue(r, g, b) : getBrightness(r, g, b);
+      const bright = mode == "HUE" ? getHue(r, g, b) : getBrightness(r, g, b);
 
       // Test the brightness against the threshold
       // if (bright > threshold) {
@@ -73,7 +73,7 @@ export function imageToBW(
     count = 0;
   }
 
-  bwImg.updatePixels()
+  bwImg.updatePixels();
 
   return {
     bwArr,

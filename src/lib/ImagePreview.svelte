@@ -4,12 +4,11 @@
   import type { Image } from "p5";
   import P5, { type Sketch } from "p5-svelte";
   export let selected: ImgObject;
-  export let imgWidth = 300;
-  export let imgHeight = 300;
+  export let imgSize = 400;
 
   export let sortType: SortType = "BRIGHTNESS";
   export let threshold: number;
-  export let direction = false;
+  export let invert = false;
 
   let sketch: Sketch = (p5) => {
     let img: Image;
@@ -26,9 +25,9 @@
 
     function reset() {
       p5.disableFriendlyErrors = true;
-      p5.createCanvas(imgWidth, imgHeight);
-      img.resize(imgWidth, imgHeight);
-      bwImg.resize(imgWidth, imgHeight);
+      p5.createCanvas(imgSize, imgSize);
+      img.resize(imgSize, imgSize);
+      bwImg.resize(imgSize, imgSize);
       img.loadPixels();
       bwImg.loadPixels();
 
@@ -44,6 +43,9 @@
         p5.noLoop();
         img = p5.loadImage(file, () => (bwImg = p5.loadImage(file, reset)));
       }
+      if (img.width != imgSize) {
+        reset();
+      }
 
       let rT, gT, bT, bright;
 
@@ -57,7 +59,7 @@
           bright =
             sortType === "HUE" ? getHue(rT, gT, bT) : getBrightness(rT, gT, bT);
 
-          if (direction ? bright > threshold : bright < threshold) {
+          if (invert ? bright > threshold : bright < threshold) {
             bwImg.pixels[index] = 255;
             bwImg.pixels[index + 1] = 255;
             bwImg.pixels[index + 2] = 255;
@@ -74,12 +76,4 @@
   };
 </script>
 
-<div class="image-preview">
-  <P5 {sketch} />
-</div>
-
-<style lang="scss">
-  .image-preview {
-    padding: 1rem;
-  }
-</style>
+<P5 {sketch} />

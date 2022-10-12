@@ -5,18 +5,19 @@
   import { MODES } from "$utils/constants";
   import { getBrightness, getHue, imageToBW } from "$utils/utils";
 
-  export let direction = false;
+  export let invert = false;
   export let threshold = 70; //* 120-170
   export let selected: ImgObject;
   export let sortType: SortType = "BRIGHTNESS";
+  export let imgSize = 400;
 
   const sketch: Sketch = (p5) => {
     //! TODO: Enable
-    // p5.disableFriendlyErrors = true;
+    p5.disableFriendlyErrors = true;
     let canvas: Renderer;
-    const fileName = selected.path ?? selected.data;
+    const imageName = selected.path ?? selected.data;
+    const fileName = `${selected.title}_${sortType}_${threshold}`;
     let img: Image, bwImg: Image, sortedImg: Image, randomImg: Image;
-    // const MODES: Mode[] = ["BW", "ORIGINAL", "RANDOM", "SORTED"];
 
     let INTERVAL_LEN = 0;
     let counter = 0;
@@ -41,29 +42,24 @@
     let numBlack: number[] = [];
 
     p5.preload = () => {
-      img = p5.loadImage(fileName);
-      bwImg = p5.loadImage(fileName);
-      sortedImg = p5.loadImage(fileName);
-      randomImg = p5.loadImage(fileName);
-    };
-
-    p5.keyPressed = () => {
-      if (p5.key == "s") p5.saveCanvas(canvas, "test", "png");
-
-      if (p5.key == "b") {
-        const newI = (MODES.indexOf(current) + 1) % MODES.length;
-        current = MODES[newI];
-        console.log(current);
-        p5.loop();
-      }
+      img = p5.loadImage(imageName);
+      bwImg = p5.loadImage(imageName);
+      sortedImg = p5.loadImage(imageName);
+      randomImg = p5.loadImage(imageName);
     };
 
     p5.setup = () => {
+      img.resize(imgSize, imgSize);
+      bwImg.resize(imgSize, imgSize);
+      sortedImg.resize(imgSize, imgSize);
+      randomImg.resize(imgSize, imgSize);
+
       img.loadPixels();
       bwImg.loadPixels();
       sortedImg.loadPixels();
       randomImg.loadPixels();
-      canvas = p5.createCanvas(img.width, img.height);
+
+      canvas = p5.createCanvas(imgSize, imgSize);
       p5.frameRate(120);
       p5.pixelDensity(1);
 
@@ -85,7 +81,7 @@
           // const bright = 0.2126 * r + 0.7152 * g + 0.0722 * b;
           // Test the brightness against the threshold
 
-          if (direction ? bright > threshold : bright < threshold) {
+          if (invert ? bright > threshold : bright < threshold) {
             bwImg.pixels[index] = 255;
             bwImg.pixels[index + 1] = 255;
             bwImg.pixels[index + 2] = 255;
@@ -99,7 +95,6 @@
         numBlack.push(count);
         count = 0;
       }
-      console.log(bwImg.pixels);
 
       INTERVAL_LEN = numBlack[counter];
       bwImg.updatePixels();
@@ -108,6 +103,17 @@
 
       p5.loadPixels();
       p5.updatePixels();
+    };
+
+    p5.keyPressed = () => {
+      if (p5.key == "s") p5.saveCanvas(canvas, fileName, "png");
+
+      if (p5.key == "b") {
+        const newI = (MODES.indexOf(current) + 1) % MODES.length;
+        current = MODES[newI];
+        console.log(current);
+        p5.loop();
+      }
     };
 
     p5.draw = () => {

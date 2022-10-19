@@ -1,15 +1,14 @@
 <script lang="ts">
+  import { MODES } from "$utils/constants";
+  import { sortParams } from "$utils/store";
+  import type { Col, ImgObject, Mode } from "$utils/types";
+  import { getBrightness, getHue } from "$utils/utils";
   import type { Image, Renderer } from "p5";
   import P5, { type Sketch } from "p5-svelte";
-  import type { Col, ImgObject, Mode, SortType } from "$utils/types";
-  import { MODES } from "$utils/constants";
-  import { getBrightness, getHue, imageToBW } from "$utils/utils";
 
-  export let invert = false;
-  export let threshold = 70; //* 120-170
+  $: ({ imgSize, invert, sortType, threshold } = $sortParams);
+
   export let selected: ImgObject;
-  export let sortType: SortType = "BRIGHTNESS";
-  export let imgSize = 400;
 
   const sketch: Sketch = (p5) => {
     //! TODO: Enable

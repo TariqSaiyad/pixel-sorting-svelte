@@ -13,3 +13,10 @@ export type ImgObject = {
   path?: string;
   data?: string;
 };
+
+export type SortParameters = {
+  threshold: number;
+  invert: boolean;
+  sortType: SortType;
+  imgSize: number;
+};

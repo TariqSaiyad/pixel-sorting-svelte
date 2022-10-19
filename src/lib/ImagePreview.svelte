@@ -1,14 +1,13 @@
 <script lang="ts">
-  import type { ImgObject, SortType } from "$utils/types";
+  import { sortParams } from "$utils/store";
+  import type { ImgObject } from "$utils/types";
   import { getBrightness, getHue } from "$utils/utils";
   import type { Image } from "p5";
   import P5, { type Sketch } from "p5-svelte";
-  export let selected: ImgObject;
-  export let imgSize = 400;
 
-  export let sortType: SortType = "BRIGHTNESS";
-  export let threshold: number;
-  export let invert = false;
+  $: ({ imgSize, invert, sortType, threshold } = $sortParams);
+
+  export let selected: ImgObject;
 
   let sketch: Sketch = (p5) => {
     let img: Image;

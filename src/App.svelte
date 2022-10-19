@@ -3,14 +3,13 @@
   import ImagePreview from "$lib/ImagePreview.svelte";
   import PixelSort from "$lib/PixelSort.svelte";
   import { IMAGES, SORT_TYPES } from "$utils/constants";
-  import type { ImgObject, SortType } from "$utils/types";
-  import { fade, blur } from "svelte/transition";
+  import type { ImgObject } from "$utils/types";
+  import { fade } from "svelte/transition";
+  import { sortParams } from "$utils/store";
 
-  let threshold = 44;
-  let invert = true;
-  let sortType: SortType = "BRIGHTNESS";
+  $: ({ imgSize, threshold } = $sortParams);
+
   let selected: ImgObject = IMAGES.at(0);
-  let imgSize = 400;
   let running = false;
 
   function doSort() {
@@ -39,42 +38,49 @@
   </div>
 
   <div class="content">
-    <div class="controls">
-      <div>
+    <form
+      on:submit|preventDefault={running ? doReset : doSort}
+      class="controls"
+    >
+      <div class="controls__field">
         <label for="threshold">Threshold</label>
         <input
           type="range"
           min="0"
           max="255"
-          bind:value={threshold}
+          bind:value={$sortParams.threshold}
           name="threshold"
         />
         <output>{threshold}</output>
       </div>
-      <div>
+      <div class="controls__field">
         <label for="imageSize">Size</label>
         <input
           type="range"
           min="100"
           max="600"
           step="50"
-          bind:value={imgSize}
+          bind:value={$sortParams.imgSize}
           name="imageSize"
         />
         <output>{imgSize}</output>
       </div>
-      <div>
+      <div class="controls__field">
         <label for="invert">Invert</label>
-        <input type="checkbox" bind:checked={invert} name="invert" />
+        <input
+          type="checkbox"
+          bind:checked={$sortParams.invert}
+          name="invert"
+        />
       </div>
-      <div>
+      <div class="controls__field">
         <fieldset>
           <legend>Sort Type</legend>
           {#each SORT_TYPES as type}
             <label>
               <input
                 type="radio"
-                bind:group={sortType}
+                bind:group={$sortParams.sortType}
                 name="sortTypes"
                 value={type}
               />
@@ -84,20 +90,18 @@
         </fieldset>
       </div>
       <div>
-        <button on:click={running ? doReset : doSort}>
-          {running ? "Reset" : "Sort"}
-        </button>
+        <button type="submit">{running ? "Reset" : "Sort"}</button>
       </div>
-    </div>
+    </form>
 
     <div class="container" style={`--size:${imgSize}px`}>
       {#if running}
         <div transition:fade>
-          <PixelSort {threshold} {selected} {invert} {sortType} {imgSize} />
+          <PixelSort {selected} />
         </div>
       {:else}
         <div transition:fade>
-          <ImagePreview {selected} {threshold} {sortType} {invert} {imgSize} />
+          <ImagePreview {selected} />
         </div>
       {/if}
     </div>

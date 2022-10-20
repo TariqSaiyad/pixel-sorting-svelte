@@ -76,8 +76,7 @@
 
           // const bright = getHue(r);
           // const bright = (r + g + b) / 3;
-          bright =
-            sortType === "HUE" ? getHue(rT, gT, bT) : getBrightness(rT, gT, bT);
+          bright = getBrightness(rT, gT, bT);
           // const bright = (0.299 * r) + (0.587 * g) + (0.114 * b);
           // const bright = 0.2126 * r + 0.7152 * g + 0.0722 * b;
           // Test the brightness against the threshold
@@ -147,11 +146,16 @@
                 b: Math.random() * 255,
               };
 
-              temp.sort(
-                (a, b) =>
-                  getBrightness(b.r, b.g, b.b) - getBrightness(a.r, a.g, a.b)
-              );
-              // temp.sort((a, b) => getHue(a) - getHue(b));
+              if (sortType == "BRIGHTNESS") {
+                temp.sort(
+                  (a, b) =>
+                    getBrightness(b.r, b.g, b.b) - getBrightness(a.r, a.g, a.b)
+                );
+              } else {
+                temp.sort(
+                  (a, b) => getHue(a.r, a.g, a.b) - getHue(b.r, b.g, b.b)
+                );
+              }
 
               for (let ti = 0; ti < temp.length; ti++) {
                 p5.pixels[tempIndex[ti]] = temp[ti].r;

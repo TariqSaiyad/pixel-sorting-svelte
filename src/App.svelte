@@ -22,16 +22,12 @@
     running = false;
     complete = false;
   }
-
-  function doSave() {
-    complete = false;
-  }
 </script>
 
 <main>
   <div class="sidebar">
-    <h1>Pixel Sorting</h1>
-    <div class="info">Select image to sort</div>
+    <div class="heading-wrapper"><h1>Pixel Sorting</h1></div>
+    <span>Select image to sort</span>
     <ul class="image-buttons">
       {#each IMAGES as image}
         <ImageButton
@@ -94,10 +90,12 @@
         </div>
       </div>
       <div class="controls__buttons">
-        <button type="submit">{running ? "Reset" : "Sort"}</button>
-        {#if complete}
-          <button on:click={doSave}>Save</button>
+        {#if running}
+          <div transition:fade style={`color:${complete ? "green" : "orange"}`}>
+            {complete ? "Complete" : "Running"}
+          </div>
         {/if}
+        <button type="submit">{running ? "Reset" : "Sort"}</button>
       </div>
     </form>
 
@@ -117,13 +115,37 @@
 
 <style lang="scss">
   @use "variables";
-  .info {
+
+  .heading-wrapper {
+    background-color: #242424;
+    background-image: radial-gradient(#ff595c82 1.55px, #242424 1.55px);
+    background-size: 31px 31px;
+    position: sticky;
+    top: 0rem;
+    z-index: 999;
+    padding: 1rem;
+  }
+
+  h1 {
+    margin: 0;
+    background: linear-gradient(
+      120deg,
+      #ef548f 0%,
+      #ef8b6d 20%,
+      #cfef6b 40%,
+      #3bf0c1 60%,
+      #3bf0c1 80%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 1.5px;
+    font-variation-settings: "MONO" 1, "CRSV" 1;
   }
 
   main {
     display: grid;
     grid-gap: 1rem;
-    grid-template-columns: 1fr 3fr;
+    grid-template-columns: 2fr 5fr;
     align-items: start;
     justify-items: center;
 
@@ -196,6 +218,9 @@
     }
 
     &__buttons {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
       margin-left: auto;
     }
   }

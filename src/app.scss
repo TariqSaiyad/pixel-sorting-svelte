@@ -29,14 +29,11 @@ a {
   }
 }
 
-
-
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
   background-color: #242424;
-  opacity: 1;
   background-image: radial-gradient(#ff595c82 1.55px, #242424 1.55px);
   background-size: 31px 31px;
 }
@@ -54,7 +51,7 @@ body {
   width: fit-content;
   margin: 0 auto;
   padding: 0.7rem 1rem;
-  border-radius: variables.$border-radius;
+  border-radius: variables.$border-radius-small;
   background: whitesmoke;
   color: variables.$color-darker;
   font-size: variables.$text-small;

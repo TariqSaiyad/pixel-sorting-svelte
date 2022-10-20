@@ -13,6 +13,8 @@
 </button>
 
 <style lang="scss">
+  @use "../variables";
+
   .image-btn {
     width: min(100%, 10rem);
     padding: 1rem;
@@ -37,7 +39,7 @@
   }
 
   .selected {
-    border: 3px solid tan;
+    border: 3px solid variables.$color-secondary;
     position: relative;
 
     &::before {

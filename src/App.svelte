@@ -7,32 +7,38 @@
   import { fade } from "svelte/transition";
   import { sortParams } from "$utils/store";
 
-  $: ({ imgSize, threshold } = $sortParams);
+  $: ({ imgSize } = $sortParams);
 
   let selected: ImgObject = IMAGES.at(0);
   let running = false;
+  let complete = false;
 
   function doSort() {
     running = true;
+    complete = false;
   }
 
   function doReset() {
     running = false;
+    complete = false;
+  }
+
+  function doSave() {
+    complete = false;
   }
 </script>
 
 <main>
   <div class="sidebar">
-    <span class="info-box">Select image to process</span>
+    <h1>Pixel Sorting</h1>
+    <div class="info">Select image to sort</div>
     <ul class="image-buttons">
       {#each IMAGES as image}
-        <li>
-          <ImageButton
-            on:click={() => (selected = image)}
-            selected={selected.title === image.title}
-            {image}
-          />
-        </li>
+        <ImageButton
+          on:click={() => (selected = image)}
+          selected={selected.title === image.title}
+          {image}
+        />
       {/each}
     </ul>
   </div>
@@ -40,7 +46,7 @@
   <div class="content">
     <form
       on:submit|preventDefault={running ? doReset : doSort}
-      class="controls"
+      class="controls card"
     >
       <div class="controls__field">
         <label for="threshold">Threshold</label>
@@ -51,7 +57,6 @@
           bind:value={$sortParams.threshold}
           name="threshold"
         />
-        <output>{threshold}</output>
       </div>
       <div class="controls__field">
         <label for="imageSize">Size</label>
@@ -63,7 +68,6 @@
           bind:value={$sortParams.imgSize}
           name="imageSize"
         />
-        <output>{imgSize}</output>
       </div>
       <div class="controls__field">
         <label for="invert">Invert</label>
@@ -74,8 +78,8 @@
         />
       </div>
       <div class="controls__field">
-        <fieldset>
-          <legend>Sort Type</legend>
+        <legend>Sort Type</legend>
+        <div class="radio-group">
           {#each SORT_TYPES as type}
             <label>
               <input
@@ -87,17 +91,20 @@
               {type}
             </label>
           {/each}
-        </fieldset>
+        </div>
       </div>
-      <div>
+      <div class="controls__buttons">
         <button type="submit">{running ? "Reset" : "Sort"}</button>
+        {#if complete}
+          <button on:click={doSave}>Save</button>
+        {/if}
       </div>
     </form>
 
     <div class="container" style={`--size:${imgSize}px`}>
       {#if running}
         <div transition:fade>
-          <PixelSort {selected} />
+          <PixelSort {selected} on:complete={(e) => (complete = true)} />
         </div>
       {:else}
         <div transition:fade>
@@ -109,6 +116,7 @@
 </main>
 
 <style lang="scss">
+  @use "variables";
   .info {
   }
 
@@ -118,13 +126,19 @@
     grid-template-columns: 1fr 3fr;
     align-items: start;
     justify-items: center;
+
+    @include variables.breakpoint-tablet-down {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+    }
   }
 
   .container {
     overflow: hidden;
     display: grid;
-    height: var(--size);
-    width: var(--size);
+    margin: 3rem auto;
+    height: min(90vw, var(--size));
+    width: min(90vw, var(--size));
 
     & > * {
       grid-column: 1/2;
@@ -137,13 +151,52 @@
     max-height: 90vh;
   }
 
+  .content {
+    width: 100%;
+  }
+
   .image-buttons {
     display: flex;
     justify-content: center;
     gap: 1rem;
     flex-flow: row wrap;
     margin-bottom: 2rem;
-    padding: 0;
+    padding: 0.5rem;
     list-style-type: none;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    flex-flow: wrap;
+    gap: 1rem 1.5rem;
+
+    &__field {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0;
+      padding: 0;
+      border: none;
+
+      label,
+      legend {
+        font-weight: 500;
+        text-transform: uppercase;
+      }
+
+      .radio-group {
+        display: grid;
+        justify-items: start;
+        label {
+          font-size: variables.$text-small;
+          font-weight: normal;
+        }
+      }
+    }
+
+    &__buttons {
+      margin-left: auto;
+    }
   }
 </style>

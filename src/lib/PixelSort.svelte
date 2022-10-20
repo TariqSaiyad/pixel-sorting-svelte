@@ -5,10 +5,12 @@
   import { getBrightness, getHue } from "$utils/utils";
   import type { Image, Renderer } from "p5";
   import P5, { type Sketch } from "p5-svelte";
+  import { createEventDispatcher } from "svelte";
 
   $: ({ imgSize, invert, sortType, threshold } = $sortParams);
 
   export let selected: ImgObject;
+  const dispatch = createEventDispatcher();
 
   const sketch: Sketch = (p5) => {
     //! TODO: Enable
@@ -174,6 +176,7 @@
               randomImg.updatePixels();
               console.log("STOPPED");
               done = true;
+              dispatch("complete");
               break;
             }
 

@@ -1,12 +1,12 @@
-$base-font-size: 18px;
+@use 'variables';
 
 :root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: $base-font-size;
+  font-family: 'Recursive', monospace;
+  font-size: variables.$base-font-size;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: variables.$color-dark;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -14,62 +14,97 @@ $base-font-size: 18px;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  accent-color: variables.$color-primary;
 
 
 }
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: variables.$color-secondary;
   text-decoration: inherit;
+
+  &:hover {
+    color: variables.$color-secondary;
+  }
 }
 
-a:hover {
-  color: #535bf2;
-}
+
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-}
-
-h1 {
-  font-size: 3rem;
-  line-height: 1.1;
+  background-color: #242424;
+  opacity: 1;
+  background-image: radial-gradient(#ff595c82 1.55px, #242424 1.55px);
+  background-size: 31px 31px;
 }
 
 .card {
-  padding: 1rem;
+  padding: clamp(1rem, 2.5vmin, 2rem) clamp(1.5rem, 3vmin, 3rem);
+  margin: 2rem max(1rem, 4vw);
+  border-radius: variables.$border-radius;
+  background: whitesmoke;
+  color: variables.$color-darker;
+  @include variables.box-shadow;
+}
+
+.info {
+  width: fit-content;
+  margin: 0 auto;
+  padding: 0.7rem 1rem;
+  border-radius: variables.$border-radius;
+  background: whitesmoke;
+  color: variables.$color-darker;
+  font-size: variables.$text-small;
+  @include variables.box-shadow;
+}
+
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: variables.$color-darker;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: variables.$color-primary;
+  box-shadow: 0 1px 2px rgba(255, 255, 255, .5);
 }
 
 #app {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   text-align: center;
 }
 
 button {
   border-radius: 8px;
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: variables.$color-darker;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: all 0.2s ease-out;
 
-}
+  &:hover {
+    border-color: variables.$color-primary;
+    background-color: variables.$color-dark;
+    scale: 1.05;
+  }
 
-button:hover {
-  border-color: #646cff;
-}
-
-button:focus,
-button:focus-visible {
-  outline: 1px auto -webkit-focus-ring-color;
+  &:focus,
+  button:focus-visible {
+    outline: 1px auto -webkit-focus-ring-color;
+  }
 }
 
 @media (prefers-color-scheme: light) {
@@ -79,7 +114,7 @@ button:focus-visible {
   }
 
   a:hover {
-    color: #747bff;
+    color: variables.$color-secondary;
   }
 
   button {

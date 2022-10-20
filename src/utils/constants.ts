@@ -4,11 +4,11 @@ export const MODES: Mode[] = ["BW", "ORIGINAL", "RANDOM", "SORTED"];
 export const SORT_TYPES: SortType[] = ["BRIGHTNESS", "HUE"];
 
 export const IMAGES: ImgObject[] = [
-  { title: "Beach", path: "src/assets/beach.jpg" },
-  { title: "Dunes", path: "src/assets/dunes.jpg" },
-  { title: "Waterfall", path: "src/assets/waterfall.jpg" },
-  { title: "Orange Kiss", path: "src/assets/plant.jpg" },
-  { title: "Mario Pixel Art", path: "src/assets/mario.png" },
-  { title: "Tokyo", path: "src/assets/tokyo.jpg" },
-  { title: "Venice", path: "src/assets/venice.jpg" },
+  { title: "Beach", path: "public/images/beach.jpg" },
+  { title: "Dunes", path: "public/images/dunes.jpg" },
+  { title: "Waterfall", path: "public/images/waterfall.jpg" },
+  { title: "Orange Kiss", path: "public/images/plant.jpg" },
+  { title: "Mario Pixel Art", path: "public/images/mario.png" },
+  { title: "Tokyo", path: "public/images/tokyo.jpg" },
+  { title: "Venice", path: "public/images/venice.jpg" },
 ];

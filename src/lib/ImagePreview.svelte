@@ -1,11 +1,11 @@
 <script lang="ts">
   import { sortParams } from "$utils/store";
   import type { ImgObject } from "$utils/types";
-  import { getBrightness, getHue } from "$utils/utils";
+  import { getBrightness } from "$utils/utils";
   import type { Image } from "p5";
   import P5, { type Sketch } from "p5-svelte";
 
-  $: ({ imgSize, invert, sortType, threshold } = $sortParams);
+  $: ({ imgSize, invert, threshold } = $sortParams);
 
   export let selected: ImgObject;
 
@@ -55,8 +55,7 @@
           gT = img.pixels[index + 1];
           bT = img.pixels[index + 2];
 
-          bright =
-            sortType === "HUE" ? getHue(rT, gT, bT) : getBrightness(rT, gT, bT);
+          bright = getBrightness(rT, gT, bT);
 
           if (invert ? bright > threshold : bright < threshold) {
             bwImg.pixels[index] = 255;

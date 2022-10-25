@@ -135,7 +135,7 @@
           p5.image(sortedImg, 0, 0);
           p5.noLoop();
         } else {
-          for (let j = 0; j < 1000; j++) {
+          for (let j = 0; j < 3000; j++) {
             if (temp.length === INTERVAL_LEN) {
               counter++;
               INTERVAL_LEN = numBlack[counter];
@@ -204,10 +204,10 @@
               tempIndex.push(i);
             }
 
-            randomImg.updatePixels();
-            p5.updatePixels();
             i += 4;
           }
+          randomImg.updatePixels();
+          p5.updatePixels();
         }
       }
     };
